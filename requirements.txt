@@ -1,0 +1,6 @@
+fastapi
+pdfplumber
+openai
+pandas
+python-dotenv
+uvicorn
