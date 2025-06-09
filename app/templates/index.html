@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Analizador de Artículos Científicos</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Roboto', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* 🎥 Video de fondo */
+    
+    .video-bg {
+      position: fixed;
+      right: 0;
+      bottom: 0;
+      min-width: 100%; 
+      min-height: 100%;
+      z-index: -1;
+      filter: blur(4px);
+      object-fit: cover;
+    }
+
+    /* 📦 Contenedor del formulario */
+    .container {
+      max-width: 600px;
+      margin: 4rem auto;
+      padding: 2rem;
+      background-color: rgba(255, 255, 255, 0.95);
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+      color: #333;
+      position: relative;
+      z-index: 1;
+    }
+
+    h1 {
+      text-align: center;
+      color: #1b2a49;
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    form {
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    label {
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
+
+    input[type="text"],
+    input[type="file"] {
+      padding: 0.75rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+      width: 100%;
+    }
+
+    button {
+      padding: 0.75rem 1.5rem;
+      background-color: #0077b6;
+      color: white;
+      font-size: 1rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #023e8a;
+    }
+
+    .logos-slide img {
+      height: 280px;
+      object-fit: contain;
+      opacity: 0.9;
+    }
+
+    /* 🖼️ Animación de logos */
+    .logos-carrusel {
+      position: absolute;
+      bottom: 150px;
+      width: 100%;
+      overflow: hidden;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .logos-slide {
+      display: flex;
+      width: max-content;
+      animation: scroll-logos 20s linear infinite;
+      gap: 40px;
+    }
+
+    @keyframes scroll-logos {
+      0% {
+        transform: translateX(0%);
+      }
+      100% {
+        transform: translateX(-50%);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .logos-slide img {
+        height: 50px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- 🎥 Video de fondo difuminado -->
+  <video autoplay muted loop class="video-bg">
+    <source src="/static/loop.mp4" type="video/mp4">
+  </video>
+
+  <!-- 🖼️ Carrusel de logos -->
+  <div class="logos-carrusel">
+    <div class="logos-slide">
+      <img src="/static/ScienceDirect.png" alt="ScienceDirect">
+      <img src="/static/scopus.png" alt="Otro logo">
+      <img src="/static/elsevierr.png" alt="Elsevier">
+      <img src="/static/ScienceDirect.png" alt="ScienceDirect">
+      <img src="/static/scopus.png" alt="Otro logo">
+      <img src="/static/elsevierr.png" alt="Elsevier">
+    </div>
+  </div>
+
+  <!-- 🧾 Formulario -->
+  <div class="container">
+    <h1>Analizador de Artículos Científicos</h1>
+    <form method="post" action="/analizar/" enctype="multipart/form-data">
+      <div>
+        <label for="tema">Tema de investigación:</label>
+        <input type="text" id="tema" name="tema" required />
+      </div>
+
+      <div>
+        <label for="pdfs">Selecciona archivos PDF:</label>
+        <input type="file" id="pdfs" name="pdfs" multiple required accept=".pdf" />
+      </div>
+
+      <button type="submit">Analizar</button>
+    </form>
+  </div>
+<script>
+  const form = document.querySelector("form");
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    const formData = new FormData(form);
+
+    fetch("/analizar/", {
+      method: "POST",
+      body: formData,
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.mensajes && Array.isArray(data.mensajes)) {
+          data.mensajes.forEach((msg, i) => {
+            const alerta = document.createElement("div");
+            alerta.textContent = msg;
+            alerta.style = `
+              position: fixed;
+              top: ${20 + i * 60}px;
+              right: 20px;
+              background-color: #2196f3;
+              color: white;
+              padding: 15px;
+              border-radius: 8px;
+              z-index: 1000;
+              box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            `;
+            document.body.appendChild(alerta);
+            setTimeout(() => alerta.remove(), 5000);
+          });
+        }
+
+        // Redirige a "/" después de 5 segundos
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 5000);
+      })
+      .catch(error => {
+        console.error("Error:", error);
+        alert("⚠️ Error al analizar los archivos.");
+      });
+  });
+</script>
+</body>
+</html>
