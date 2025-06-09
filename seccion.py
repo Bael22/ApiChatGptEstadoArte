@@ -1,6 +1,6 @@
 from tempfile import NamedTemporaryFile
 from fastapi import FastAPI, Request, UploadFile, File, Form
-from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 import pdfplumber
@@ -25,7 +25,9 @@ app = FastAPI()
 templates = Jinja2Templates(directory="app/templates")
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
+
 #Se da el cuartil
+
 def get_journal_quartile(journal_name):
     headers = {
         "User-Agent": (
@@ -129,7 +131,7 @@ async def analizar(request: Request,tema: str = Form(...), pdfs: list[UploadFile
     client = OpenAI()
     df = pd.DataFrame(columns=[
         "Nombre del Artículo", "Tipo de Brecha", 
-        "Vacío académico y oportunidad de innovación", "DOI","Cuartil (Q)", "Base de datos"
+        "Vacío académico y oportunidad de innovación", "DOI","Cuartil (Q)","Base de Datos"
     ])
 
     brechas_definicion = """
@@ -278,9 +280,12 @@ async def analizar(request: Request,tema: str = Form(...), pdfs: list[UploadFile
         print("titulo, tipo de brecha, vacio y innovacion: "+gpt_refinado)
         resultados.append("El articulo "+titulo_articulo+" es de "+revista+" cuartil "+cuartil)
     if df.empty:
-        resultados.append("⚠️ No se generó Excel porque no hay datos que mostrar.")
-        return JSONResponse(content={"mensajes": resultados})
-    
+        resultados.append("⚠️ No se generó Excel porque no hay datos que mostrar")
+        
+        return templates.TemplateResponse("index.html", {
+                "request": request,
+                "mensaje": resultados
+            })
     with NamedTemporaryFile(delete=False, suffix=".xlsx") as tmp:
         df.to_excel(tmp.name, index=False)
         tmp_path = tmp.name
