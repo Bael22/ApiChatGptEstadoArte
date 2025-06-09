@@ -129,7 +129,7 @@ async def analizar(request: Request,tema: str = Form(...), pdfs: list[UploadFile
     client = OpenAI()
     df = pd.DataFrame(columns=[
         "Nombre del Artículo", "Tipo de Brecha", 
-        "Vacío académico y oportunidad de innovación", "DOI","Cuartil (Q)"
+        "Vacío académico y oportunidad de innovación", "DOI","Cuartil (Q)", "Base de datos"
     ])
 
     brechas_definicion = """
@@ -273,7 +273,7 @@ async def analizar(request: Request,tema: str = Form(...), pdfs: list[UploadFile
         # Concatenamos en el formato deseado para el Excel
         vacio_innovacion = f"Vacío académico: {vacio_texto}\nOportunidad de innovación: {oportunidad_texto}"
         
-        df.loc[len(df)] = [titulo_articulo, tipo_brecha, vacio_innovacion, doi,cuartil]
+        df.loc[len(df)] = [titulo_articulo, tipo_brecha, vacio_innovacion, doi,cuartil,resultadoBuscaArticulo]
         print("Columnas: "+df.columns)
         print("titulo, tipo de brecha, vacio y innovacion: "+gpt_refinado)
         resultados.append("El articulo "+titulo_articulo+" es de "+revista+" cuartil "+cuartil)
