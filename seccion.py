@@ -214,9 +214,17 @@ async def analizar(request: Request,tema: str = Form(...), pdfs: list[UploadFile
                 print(f"➡️ Continúa el análisis ({resultadoBuscaArticulo})")
             else:
                 print("⛔ Artículo no verificado, deteniendo proceso.")
-
-            if "no relevante" in relevancia2 or not(cuartil=='Q1'or cuartil=='Q2'or cuartil=='Q3'or cuartil=='Q4') or not resultadoBuscaArticulo=='Scopus':
-                resultados.append(f"No se pudo seguir analizando el archivo **{pdf.filename}** porque no es relevante para su investigación y el cuartil es {cuartil} y resultadoBuscaArticulo: {resultadoBuscaArticulo} .")
+            flag=False
+            if "no relevante" in relevancia2:
+                resultados.append(f"-No se pudo seguir analizando el archivo **{pdf.filename}** porque la relevancia:  "+relevancia2)
+                flag=True
+            if not (cuartil=='Q1'or cuartil=='Q2'or cuartil=='Q3'or cuartil=='Q4'):
+                resultados.append(f"-No se pudo seguir analizando el archivo **{pdf.filename}** porque cuartil es: {cuartil}.")
+                flag=True
+            if not resultadoBuscaArticulo=='Scopus':
+                resultados.append(f"-No se pudo seguir analizando el archivo **{pdf.filename}** porque  la revista es: {resultadoBuscaArticulo}")
+                flag=True
+            if flag: 
                 print("resultador de relevancia: "+ f"No se pudo seguir analizando el archivo **{pdf.filename}** porque no es relevante para su investigación y el cuartil es {cuartil} y resultadoBuscaArticulo: {resultadoBuscaArticulo} .\n{relevancia}")
                 continue
             #******************************************************************
