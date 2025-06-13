@@ -181,7 +181,8 @@ async def analizar(request: Request,tema: str = Form(...), pdfs: list[UploadFile
             - No relevante
 
             Si es "no relevante", explica brevemente el porqué en 2 oraciones.
-            Adicionalmente extrae el titulo y la revista del siguiente recorte del articulo :
+            Adicionalmente extrae el titulo y la revista del siguiente recorte del articulo, por favor ignora ni bien leas un parentesis al extraer la revista,
+             por ejemplo si la revista es "nternational journal of electrical (ijc)", tu solo leeras "nternational journal of electrical":
             {texto_posibletitulo}
             Entrega una sola versión final en este formato:
             Titulo: ...
