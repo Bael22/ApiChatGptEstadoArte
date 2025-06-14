@@ -259,7 +259,8 @@ async def analizar(request: Request,tema: str = Form(...), pdfs: list[UploadFile
 
         {brechas_definicion}
 
-        Entrega una sola versión final en este formato (no debe sobrepasar de los 520 caracteres en la respuesta siendo detallado y claro ):
+        Entrega una sola versión final en este formato (no debe sobrepasar de los 520 caracteres en la respuesta siendo detallado y claro ) 
+        y has enfasis en la metodologia que aplica para dar el vacio academico y oportunidad de innovacion (informacion contundente):
         Tipo de brecha: ...
         Vacío académico: ...
         Oportunidad de innovación: ...
